@@ -1,0 +1,89 @@
+SELECT OrderID, SUM(Qty)
+FROM Detail
+GROUP BY OrderID
+HAVING SUM(Qty) > 5;
+
+
+
+
+SELECT ISBN, SUM(Qty)
+FROM Detail
+WHERE OrderID IN (1, 3, 4, 6, 8)
+GROUP BY ISBN
+HAVING SUM(Qty) >= 3;
+
+
+
+
+SELECT OrderID, SUM(Qty)
+FROM Detail
+GROUP BY OrderID
+HAVING SUM(Qty) > 5;
+
+
+
+
+SELECT ORD.StudentID, STU.StudentName
+FROM STUDENT STU
+INNER JOIN ORDERS ORD ON ORD.StudentID = STU.StudentID
+WHERE ORD.OrderID BETWEEN 1 AND 5
+GROUP BY STU.StudentID;
+
+
+
+
+SELECT DISTINCT M.MajorName, S.StudentName, D.ISBN, B.BookTitle
+FROM MAJOR M, STUDENT S, DETAIL D, BOOK B, ORDERS O
+WHERE M.MajorCode = S.MajorCode 
+AND	  S.StudentID = O.StudentID 
+AND   O.OrderID = D.OrderID
+AND   D.ISBN = B.ISBN
+ORDER BY M.MajorName DESC, S.StudentName DESC, D.ISBN DESC;
+
+
+
+
+SELECT M.MajorName 'Minor', COUNT(S.MinorCode) 'StudentNum'
+FROM Major M
+LEFT JOIN STUDENT S ON M.MajorCode = S.MajorCode
+GROUP BY M.MajorName;
+
+
+
+
+SELECT B.BookTitle
+FROM BOOK B
+WHERE B.price > (SELECT AVG(B.price)
+                 FROM   BOOK B);
+
+
+
+
+SELECT S.StudentName
+FROM STUDENT S
+WHERE S.MajorCode = (SELECT S.MajorCode
+                     FROM   STUDENT S
+                     WHERE S.StudentName = 'Mark')
+AND S.StudentName <> 'Mark';
+
+
+
+
+SELECT S.StudentName, B.BookTitle
+FROM STUDENT S, BOOK B, Orders O, Detail D 
+WHERE S.StudentID = O.StudentID
+AND   O.OrderID = D.OrderID
+AND   D.ISBN = B.ISBN
+AND	  B.bookTitle NOT LIKE '%data%'
+
+
+
+
+SELECT S.StudentName, D.ISBN, D.Qty
+FROM DETAIL D 
+INNER JOIN Orders O ON D.OrderID = O.OrderID
+INNER JOIN STUDENT S ON O.StudentID = S.StudentID
+WHERE (D.ISBN, D.Qty) IN (SELECT D.ISBN, D.Qty
+                          FROM DETAIL D 
+                          WHERE OrderID = 1)
+AND    O.OrderID <> 1;
